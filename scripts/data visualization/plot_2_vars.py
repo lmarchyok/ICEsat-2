@@ -73,38 +73,6 @@ class ICEsat_2_Visualizer:
       self.ag_beams = ['gt1', 'gt2', 'gt3']
 
 
-    def plot_2_vars(laser_id, var1, var2, var1_arr, var2_arr, selims='auto'):
-
-      if selims=='auto':
-            lower = np.nanmin(np.array(var2_arr))
-            upper = np.nanmax(np.array(var2_arr))
-            serange = upper - lower
-            selims = [lower - 0.2*serange, upper + 0.1*serange]
-
-      lat_lower = np.nanmin(np.array(var1_arr))
-      lat_upper = np.nanmax(np.array(var1_arr))
-      latrange = lat_upper - lat_lower
-      latlims = [lat_lower - 0.2 * latrange, lat_upper + 0.1 * latrange]
-
-      fig = plt.figure(figsize=(9, 6), dpi=80, facecolor='w', edgecolor='k')
-      ax = fig.add_subplot(111)
-      solar_elevation = np.array(var1_arr)
-      saturation = np.array(var2_arr)
-      ax.set_title(f'{var1} vs {var2} over 700m ({laser_id})')
-      ax.set_xlabel('Solar Elevation (degrees)')
-      ax.set_ylabel('Saturation (percentage)')
-
-      atl03_plot = ax.scatter(solar_elevation, saturation, s=10,c='k',edgecolors='none',label=laser_id)
-      ax.legend(handles=[atl03_plot], loc='lower left')
-      ax.set_xlim(latlims)
-      ax.set_ylim(selims)
-
-      if not os.path.exists(f'figs/aggregate/{var1}_vs_{var2}'):
-          os.makedirs(f'figs/aggregate/{var1}_vs_{var2}')
-      fn = f'figs/aggregate/{var1}_vs_{var2}/{laser_id}.png'
-      plt.savefig(fn, dpi=150)
-      plt.close()
-
     def get_arrays(self):
 
       for i in os.listdir(self.dest_dir):
@@ -167,6 +135,39 @@ class ICEsat_2_Visualizer:
                 getattr(self, f'{beam}_var2_arr').append(np.mean(h5[1]))
 
       return [(getattr(self, f'{beam}_var1_arr'), getattr(self, f'{beam}_var2_arr')) for beam in self.beams]
+    
+    
+    def plot_2_vars(laser_id, var1, var2, var1_arr, var2_arr, selims='auto'):
+
+      if selims=='auto':
+            lower = np.nanmin(np.array(var2_arr))
+            upper = np.nanmax(np.array(var2_arr))
+            serange = upper - lower
+            selims = [lower - 0.2*serange, upper + 0.1*serange]
+
+      lat_lower = np.nanmin(np.array(var1_arr))
+      lat_upper = np.nanmax(np.array(var1_arr))
+      latrange = lat_upper - lat_lower
+      latlims = [lat_lower - 0.2 * latrange, lat_upper + 0.1 * latrange]
+
+      fig = plt.figure(figsize=(9, 6), dpi=80, facecolor='w', edgecolor='k')
+      ax = fig.add_subplot(111)
+      solar_elevation = np.array(var1_arr)
+      saturation = np.array(var2_arr)
+      ax.set_title(f'{var1} vs {var2} over 700m ({laser_id})')
+      ax.set_xlabel('Solar Elevation (degrees)')
+      ax.set_ylabel('Saturation (percentage)')
+
+      atl03_plot = ax.scatter(solar_elevation, saturation, s=10,c='k',edgecolors='none',label=laser_id)
+      ax.legend(handles=[atl03_plot], loc='lower left')
+      ax.set_xlim(latlims)
+      ax.set_ylim(selims)
+
+      if not os.path.exists(f'figs/aggregate/{var1}_vs_{var2}'):
+          os.makedirs(f'figs/aggregate/{var1}_vs_{var2}')
+      fn = f'figs/aggregate/{var1}_vs_{var2}/{laser_id}.png'
+      plt.savefig(fn, dpi=150)
+      plt.close()
 
 
     def plot_all_lasers(self, arrays, selims='auto'):
