@@ -8,9 +8,7 @@ import scipy.interpolate
 import geopandas as gpd
 import h5py
 import pandas as pd
-import matplotlib.pyplot as plt
 from shapely.geometry import box
-from create_landmask import read_granule, isolate_sea_land_photons
 
 #this function from icesat2_toolkit
 # PURPOSE: read ICESat-2 ATL03 HDF5 data files
