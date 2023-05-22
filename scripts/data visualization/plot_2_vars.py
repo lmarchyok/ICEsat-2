@@ -7,6 +7,20 @@ import h5py
 import matplotlib.pylab as plt
 from IPython.utils import strdispatch
 
+import importlib.machinery
+import importlib.util
+from pathlib import Path
+
+# Get path to mymodule
+script_dir = Path(__file__).parent
+mymodule_path = str( script_dir.joinpath('..', 'data processing', 'apply_landmask'))
+
+# Import mymodule
+loader = importlib.machinery.SourceFileLoader('mymodule', mymodule_path)
+spec = importlib.util.spec_from_loader('mymodule', loader)
+mymodule = importlib.util.module_from_spec(spec)
+loader.exec_module(mymodule) 
+
 # Extracts h5 file from zipfile, then arrays from h5 file
 class ICEsat_2_Extractor:
   def __init__(self, raw_data_dir, dest_dir, var1, var2, laser_id):
@@ -152,14 +166,14 @@ class ICEsat_2_Visualizer:
 
       for file in os.listdir(self.dest_dir):
 
-        print(f"Progress: {progress}/{len(os.listdir(self.dest_dir))}") #, self.dest_dir+'/'+file+'/'+os.listdir(self.dest_dir+'/'+file)[0])
+        print(f"Progress: {progress}/{len(os.listdir(self.dest_dir))}")
 
-        data = get_dataframes((self.dest_dir+'/'+file+'/'+os.listdir(self.dest_dir+'/'+file)[0]), '/content/drive/MyDrive/ICEsat-2/Scripts/')
-        IS2_atl03_landmask = seaLand()
+        data = apply_landmask.get_dataframes((self.dest_dir+'/'+file+'/'+os.listdir(self.dest_dir+'/'+file)[0]), '/content/drive/MyDrive/ICEsat-2/Scripts/')
+        IS2_atl03_landmask = apply_landmask.seaLand()
         land_mask1 = IS2_atl03_landmask.label_seaLand_function(data[0], data[1], data[2], data[3], data[4], data[5], data[6])[0]
         metadata_mask2 = IS2_atl03_landmask.label_seaLand_function(data[0], data[1], data[2], data[3], data[4], data[5], data[6], self.var1, self.var2)[1]
 
-        mask = masker(land_mask1, metadata_mask2, self.var1, self.var2)
+        mask = apply_landmask.masker(land_mask1, metadata_mask2, self.var1, self.var2)
         masked_arrays = mask.get_masked_data(self.var1, self.var2)
 
         intensities = []          
