@@ -6,7 +6,7 @@ from zipfile import BadZipFile
 import h5py
 import matplotlib.pylab as plt
 from IPython.utils import strdispatch
-from REMOVE_LAND import read_granule, isolate_sea_land_photons
+from create_landmask import read_granule, isolate_sea_land_photons
 import re
 import io
 import copy
