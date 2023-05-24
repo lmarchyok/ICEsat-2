@@ -156,11 +156,13 @@ class ICEsat_2_Visualizer:
       return [(getattr(self, f'{beam}_var1_arr'), getattr(self, f'{beam}_var2_arr')) for beam in self.beams]
     
     def get_12_arrays_w_landmask(self):
-
-      self.high_beams_var1 = []
-      self.high_beams_var2 = []
-      self.low_beams_var1 = []
-      self.low_beams_var2 = []
+      
+      if self.agg_by_intensity or self.split_by_intensity:
+        
+        self.high_beams_var1 = []
+        self.high_beams_var2 = []
+        self.low_beams_var1 = []
+        self.low_beams_var2 = []
 
       progress = 1
 
@@ -198,8 +200,6 @@ class ICEsat_2_Visualizer:
                   for j in i:
                     list_of_bad_datapoints.append(j)
                   v = np.delete(v, list_of_bad_datapoints)
-                else:
-                  v_ = v
 
                 try:
                   setattr(self, f'{b}_var1_arr', np.mean(k))
@@ -213,7 +213,6 @@ class ICEsat_2_Visualizer:
                     setattr(self, f'{b}_var2_arr_sb', [])
                   else:
                     getattr(self, f'{b}_var2_arr_sb').append(np.mean(v))
-                  
 
                 except:
                     continue
